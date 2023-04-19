@@ -113,16 +113,15 @@ st.markdown(hide, unsafe_allow_html=True)
 #     unsafe_allow_html=True,
 # )
 if input_text:
-    prompt = "Brainstorm ideas for "+str(input_text)
-    if prompt:
+    if prompt := f"Brainstorm ideas for {str(input_text)}":
         openai.api_key = st.secrets["openaiKey"]
         response = openai.Completion.create(engine="text-davinci-002", prompt=prompt, max_tokens=150)
         brainstorming_output = response['choices'][0]['text']
-        today = datetime.today().strftime('%Y-%m-%d')
+        today = datetime.now().strftime('%Y-%m-%d')
         topic = "Brainstorming ideas for: "+input_text+"\n@Date: "+str(today)+"\n"+brainstorming_output
-        
+
         st.info(brainstorming_output)
-        filename = "brainstorming_"+str(today)+".txt"
+        filename = f"brainstorming_{str(today)}.txt"
         btn = st.download_button(
             label="Download txt",
             data=topic,
@@ -131,7 +130,7 @@ if input_text:
         fields = [input_text, brainstorming_output, str(today)]
         # read local csv file
         r = pd.read_csv('./data/prompts.csv')
-        if len(fields)!=0:
+        if fields:
             with open('./data/prompts.csv', 'a', encoding='utf-8', newline='') as f:
                 # write to csv file (append mode)
                 writer = csv.writer(f, delimiter=',', lineterminator='\n')
